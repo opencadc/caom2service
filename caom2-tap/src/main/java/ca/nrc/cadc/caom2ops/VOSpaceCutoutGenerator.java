@@ -3,7 +3,7 @@
 *******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 **************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 *
-*  (c) 2011.                            (c) 2011.
+*  (c) 2017.                            (c) 2017.
 *  Government of Canada                 Gouvernement du Canada
 *  National Research Council            Conseil national de recherches
 *  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -62,84 +62,54 @@
 *  <http://www.gnu.org/licenses/>.      pas le cas, consultez :
 *                                       <http://www.gnu.org/licenses/>.
 *
-*  $Revision: 5 $
 *
 ************************************************************************
 */
 
-package ca.nrc.cadc.caom2ops.mapper;
+package ca.nrc.cadc.caom2ops;
 
-import ca.nrc.cadc.caom2.Part;
-import ca.nrc.cadc.caom2.ProductType;
-import ca.nrc.cadc.caom2ops.Util;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.util.Date;
+import java.net.URL;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.apache.log4j.Logger;
+
+import ca.nrc.cadc.caom2.artifact.resolvers.VOSpaceResolver;
+import ca.nrc.cadc.net.NetUtil;
 
 /**
-*
-* @author pdowler
-*/
-public class PartMapper implements VOTableRowMapper<Part>
-{
-    private static final Logger log = Logger.getLogger(PartMapper.class);
-    
-    private Map<String,Integer> map;
+ *
+ * @author yeunga
+ */
+public class VOSpaceCutoutGenerator extends VOSpaceResolver implements CutoutGenerator
+{    
+    private List<String> cutouts = null;
 
-    public PartMapper(Map<String,Integer> map)
+    public URL toURL(URI uri, List<String> cutouts)
     {
-            this.map = map;
+        this.cutouts = cutouts;
+        return super.toURL(uri);
     }
 
-    /**
-     * Map columns from the current row into an Artifact, starting at the 
-     * specified column offset.
-     * 
-     * @param data
-     * @param dateFormat 
-     * @return a part
-     */
-    public Part mapRow(List<Object> data, DateFormat dateFormat)
+    @Override
+    protected String createURL(URI uri)
     {
-        log.debug("mapping Part");
-        UUID id = Util.getUUID(data, map.get("caom2:Part.id"));
-        if (id == null)
-            return null;
+        // assume that the baseQuery already contains one or more parameters
+        String baseQuery = super.createURL(uri);
+        StringBuilder query = new StringBuilder();
+        query.append(baseQuery);
 
-        try
+        if (this.cutouts != null && !this.cutouts.isEmpty())
         {
-            String pName = Util.getString(data, map.get("caom2:Part.name"));
-            Part part = new Part(pName);
-
-            String pType = Util.getString(data, map.get("caom2:Part.productType"));
-            if (pType != null)
-                part.productType = ProductType.toValue(pType);
-
-            Date pLastModified = Util.getDate(data, map.get("caom2:Part.lastModified"));
-            Date pMaxLastModified = Util.getDate(data, map.get("caom2:Part.maxLastModified"));
-            Util.assignLastModified(part, pLastModified, "lastModified");
-            Util.assignLastModified(part, pMaxLastModified, "maxLastModified");
-
-            URI metaChecksum = Util.getURI(data, map.get("caom2:Part.metaChecksum"));
-            URI accMetaChecksum = Util.getURI(data, map.get("caom2:Part.accMetaChecksum"));
-            Util.assignMetaChecksum(part, metaChecksum, "metaChecksum");
-            Util.assignMetaChecksum(part, accMetaChecksum, "accMetaChecksum");
-
-            Util.assignID(part, id);
-            
-            return part;
+            query.append("&");
+            query.append("view=cutout");
+            for (String cutout : this.cutouts)
+            {
+                query.append("&");
+                query.append("cutout");
+                query.append("=");
+                query.append(NetUtil.encode(cutout));
+            }
         }
-        catch(URISyntaxException ex)
-        {
-            throw new UnexpectedContentException("invalid URI", ex);
-        }
-        finally { }
+
+        return query.toString();
     }
 }
-
-
