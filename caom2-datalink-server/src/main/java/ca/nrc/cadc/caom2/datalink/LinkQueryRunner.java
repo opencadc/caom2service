@@ -160,7 +160,7 @@ public class LinkQueryRunner implements JobRunner
     private void doIt()
     {
         final String checkpointID = ParameterUtil.findParameterValue("ID", job.getParameterList()) + " - doIt";
-        final Profiler outerProfiler = new Profiler(LinkQueryRunner.class);
+        final Profiler profiler = new Profiler(LinkQueryRunner.class);
         ExecutionPhase ep;
         try
         {
@@ -237,8 +237,7 @@ public class LinkQueryRunner implements JobRunner
                 tab.setTableData(tdata);
             }
 
-            outerProfiler.checkpoint(checkpointID + ".postTAP");
-            final Profiler postTAPQueryProfiler = new Profiler(LinkQueryRunner.class);
+            profiler.checkpoint(checkpointID + ".postTAP");
 
             // Add the generic service descriptor(s)
             /*
@@ -349,7 +348,7 @@ public class LinkQueryRunner implements JobRunner
             }
             log.debug(job.getID() + ": EXECUTING -> COMPLETED [OK]");
 
-            postTAPQueryProfiler.checkpoint(checkpointID + ".response");
+            profiler.checkpoint(checkpointID + ".response");
 
         }
         catch(AccessControlException ex)
@@ -393,7 +392,7 @@ public class LinkQueryRunner implements JobRunner
             sendError(t, 500);
         }
         finally {
-            outerProfiler.checkpoint(checkpointID + ".end");
+            profiler.checkpoint(checkpointID + ".end");
         }
     }
 
