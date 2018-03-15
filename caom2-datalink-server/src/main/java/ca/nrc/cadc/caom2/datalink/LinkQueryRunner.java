@@ -89,6 +89,7 @@ import ca.nrc.cadc.dali.tables.votable.VOTableResource;
 import ca.nrc.cadc.dali.tables.votable.VOTableTable;
 import ca.nrc.cadc.dali.tables.votable.VOTableWriter;
 import ca.nrc.cadc.log.WebServiceLogInfo;
+import ca.nrc.cadc.profiler.Profiler;
 import ca.nrc.cadc.reg.client.RegistryClient;
 import ca.nrc.cadc.util.ThrowableUtil;
 import ca.nrc.cadc.uws.ErrorSummary;
@@ -158,10 +159,12 @@ public class LinkQueryRunner implements JobRunner
 
     private void doIt()
     {
-
+        final String checkpointID = ParameterUtil.findParameterValue("ID", job.getParameterList()) + " - doIt";
+        final Profiler outerProfiler = new Profiler(LinkQueryRunner.class);
         ExecutionPhase ep;
         try
         {
+            final Profiler tapQueryProfiler = new Profiler(LinkQueryRunner.class);
             ep = jobUpdater.setPhase(job.getID(), ExecutionPhase.QUEUED, ExecutionPhase.EXECUTING, new Date());
             if ( !ExecutionPhase.EXECUTING.equals(ep) )
             {
@@ -210,9 +213,10 @@ public class LinkQueryRunner implements JobRunner
                 runID = job.getRunID();
             
             CaomTapQuery query = new CaomTapQuery(tapServiceID, runID);
+            query.profilerCheckpointID = checkpointID;
             ArtifactProcessor ap = new ArtifactProcessor(dlc.getSodaID(), runID);
             ap.setDownloadOnly(downloadFilesOnly); 
-            DynamicTableData dtd = null;
+            final DynamicTableData dtd;
             if (downloadFilesOnly)
             {
                 int limit = Integer.MAX_VALUE;
@@ -233,6 +237,9 @@ public class LinkQueryRunner implements JobRunner
                 }
                 tab.setTableData(tdata);
             }
+
+            tapQueryProfiler.checkpoint(checkpointID + ".postTAP");
+            final Profiler postTAPQueryProfiler = new Profiler(LinkQueryRunner.class);
 
             // Add the generic service descriptor(s)
             /*
@@ -343,6 +350,8 @@ public class LinkQueryRunner implements JobRunner
             }
             log.debug(job.getID() + ": EXECUTING -> COMPLETED [OK]");
 
+            postTAPQueryProfiler.checkpoint(checkpointID + ".response");
+
         }
         catch(AccessControlException ex)
         {
@@ -383,6 +392,9 @@ public class LinkQueryRunner implements JobRunner
                 return;
             }
             sendError(t, 500);
+        }
+        finally {
+            outerProfiler.checkpoint(checkpointID + ".end");
         }
     }
 
