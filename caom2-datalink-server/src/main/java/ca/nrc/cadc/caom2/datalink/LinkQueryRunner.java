@@ -164,7 +164,6 @@ public class LinkQueryRunner implements JobRunner
         ExecutionPhase ep;
         try
         {
-            final Profiler tapQueryProfiler = new Profiler(LinkQueryRunner.class);
             ep = jobUpdater.setPhase(job.getID(), ExecutionPhase.QUEUED, ExecutionPhase.EXECUTING, new Date());
             if ( !ExecutionPhase.EXECUTING.equals(ep) )
             {
@@ -238,7 +237,7 @@ public class LinkQueryRunner implements JobRunner
                 tab.setTableData(tdata);
             }
 
-            tapQueryProfiler.checkpoint(checkpointID + ".postTAP");
+            outerProfiler.checkpoint(checkpointID + ".postTAP");
             final Profiler postTAPQueryProfiler = new Profiler(LinkQueryRunner.class);
 
             // Add the generic service descriptor(s)
