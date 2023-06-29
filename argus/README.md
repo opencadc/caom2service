@@ -1,12 +1,12 @@
 # argus
 
-`argus` is a TAP [https://www.ivoa.net/documents/TAP/](Table Access Protocol) service 
-for CAOM [https://www.opencadc.org/caom2/](Common Archive Observation Model).
+`argus` is an IVOA [Table Access Protocol](https://www.ivoa.net/documents/TAP/) service 
+for [Common Archive Observation Model](https://www.opencadc.org/caom2/) metadata.
 
 ## deployment
 The `argus` war file can be renamed at deployment time in order to support an alternate service 
 name, including introducing additional path elements using the 
-[https://github.com/opencadc/docker-base/tree/master/cadc-tomcat](war-rename.conf) feature.
+[war-rename.conf](https://github.com/opencadc/docker-base/tree/master/cadc-tomcat) feature.
 
 This service instance is expected to have a PostgreSQL database backend to store the TAP metadata and which
 also includes the CAOM tables. The `pgsphere` extension is used for spherical geometry columns and queries.
