@@ -12,7 +12,7 @@ repositories {
 
 apply from: '../opencadc.gradle'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.11
 
 group = 'org.opencadc'
 
@@ -31,9 +31,9 @@ sourceSets.test {
 }
 
 dependencies {
-    compile 'org.opencadc:cadc-util:[1.6.1,2.0)'
+    compile 'org.opencadc:cadc-util:[1.11.3,2.0)'
     compile 'org.opencadc:cadc-registry:[1.5.0,)'
-    compile 'org.opencadc:cadc-gms:[1.0.0,)'
+    compile 'org.opencadc:cadc-gms:[1.0.13,)'
     compile 'org.opencadc:cadc-dali:[1.2.12,)'
     compile 'org.opencadc:cadc-uws-server:[1.2.8,)'
     compile 'org.opencadc:cadc-tap-schema:[1.1.22,)'
