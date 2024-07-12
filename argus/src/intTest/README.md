@@ -41,8 +41,8 @@ minimum configuration that successfully run most of the integration tests consis
     ivo://ivoa.net/std/UMS#users-0.1 = ivo://cadc.nrc.ca/gms
     ivo://ivoa.net/std/UMS#login-0.1 = ivo://cadc.nrc.ca/gms
 
-    ivo://ivoa.net/sso#tls-with-password = https://ska-iam.stfc.ac.uk/
-    ivo://ivoa.net/sso#OpenID = https://ws-cadc.canfar.net/ac
+    ivo://ivoa.net/sso#tls-with-password = ivo://cadc.nrc.ca/gms
+    ivo://ivoa.net/sso#OpenID = ivo://cadc.nrc.ca/gms
 
     ivo://ivoa.net/std/CDP#delegate-1.0 = ivo://cadc.nrc.ca/cred
     ivo://ivoa.net/std/CDP#proxy-1.0 = ivo://cadc.nrc.ca/cred
