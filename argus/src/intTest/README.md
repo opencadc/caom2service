@@ -10,7 +10,7 @@ for a CADC staff member to run. Required certificates:
 The _auth_ identity has to be the (CADC) staff member's personal certificate because the test tries to output
 to `vos://cadc.nrc.ca~vault/{user.name}/test/some-file-name`. The _noauth_ identity should be cadcregtest1.
 
-An example of a minimum local configuration required for the `argus` service to run locally consists of the
+An example of a minimum configuration required for the `argus` service to run on a local machine consists of the
 following containers:
 - `haproxy` (image: `cadc-haproxy-dev`) - for https termination
 - `postgress` (`cadc-postgresql-dev`) - database container
@@ -18,8 +18,9 @@ following containers:
 - `icewind` (`icewind`) - to create the `caom2` schema and tables
 - `argus` (`argus`) - the service itself
 
-The configuration for the required services is documented in their GitHub repo. For `arugs` the minimum
-configuration that successfully run most of the integration tests consists of the following files in `/config`:
+The configuration for the required services is documented in their corresponding GitHub repos. For `arugs` the
+minimum configuration that successfully run most of the integration tests consists of the following files in
+`/config`:
 - `argus.properties`:
     ```
     org.opencadc.argus.VosiCapabilitiesTest > testTokenAuth`
@@ -54,7 +55,7 @@ configuration that successfully run most of the integration tests consists of th
     org.opencadc.tap.tmp.TempStorageManager.baseStorageDir = /var/tmp/argus
   ```
 
-- `catalina.properties`:
+- `catalina.properties` (with default pgdev container accounts):
     ```
     # tomcat-base
     tomcat.connector.secure=true
