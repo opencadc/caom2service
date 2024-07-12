@@ -20,6 +20,7 @@
             <param-name>logLevelPackages</param-name>
             <param-value>
                 org.opencadc.argus
+                org.opencadc.auth
                 ca.nrc.cadc.db.version
                 ca.nrc.cadc.reg
                 ca.nrc.cadc.rest
